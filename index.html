@@ -31,7 +31,8 @@
             border-width: 2px;
             border-color: black;
             overflow-y: auto;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
             color: black;
         }
         .custom-option {
@@ -198,6 +199,7 @@
             const modal = document.getElementById('modal');
             const closeModalBtn = document.getElementById('close-modal-btn');
 
+            // Create options container appended to body for dropdown items
             const optionsContainer = document.createElement('ul');
             optionsContainer.classList.add('custom-options-list', 'hidden');
             document.body.appendChild(optionsContainer);
@@ -228,19 +230,19 @@
             const typeSlotMap = {
                 'name': 'name-slot',
                 'description': 'description-slot',
-                'examples': 'examples-slot'
+                'examples': 'examples-slot',
             };
 
             const typeFilledMap = {
                 'name': 'name-filled',
                 'description': 'description-filled',
-                'examples': 'examples-filled'
+                'examples': 'examples-filled',
             };
 
             const typePlaceholderMap = {
                 'name': 'name-placeholder-text',
                 'description': 'description-placeholder-text',
-                'examples': 'examples-placeholder-text'
+                'examples': 'examples-placeholder-text',
             };
 
             function closeAllDropdowns() {
@@ -249,6 +251,7 @@
             }
 
             function updateSubmitButtonState() {
+                // Submit enabled only if all dropdowns filled AND correct
                 const allCorrect = Array.from(allCustomSelects).every(dropdown => {
                     const quadrantContainer = dropdown.closest('[data-quadrant]');
                     const slotQuadrant = quadrantContainer ? quadrantContainer.dataset.quadrant : undefined;
@@ -270,7 +273,7 @@
             allCustomSelects.forEach(dropdown => {
                 const trigger = dropdown.querySelector('.custom-select-trigger');
 
-                trigger.addEventListener('click', event => {
+                trigger.addEventListener('click', (event) => {
                     event.stopPropagation();
 
                     if (dropdown.classList.contains('correct-select')) {
@@ -312,7 +315,7 @@
                 });
             });
 
-            optionsContainer.addEventListener('click', event => {
+            optionsContainer.addEventListener('click', (event) => {
                 const clickedOption = event.target.closest('.custom-option');
                 if (clickedOption && !clickedOption.classList.contains('disabled')) {
                     if (activeDropdown) {
@@ -334,7 +337,7 @@
                 }
             });
 
-            document.addEventListener('click', event => {
+            document.addEventListener('click', (event) => {
                 if (!event.target.closest('.custom-select')) {
                     closeAllDropdowns();
                 }
@@ -364,9 +367,7 @@
 
                         const trigger = dropdown.querySelector('.custom-select-trigger');
                         if (dropdown.dataset.type) {
-                            trigger.textContent = `Select ${
-                                dropdown.dataset.type.charAt(0).toUpperCase() + dropdown.dataset.type.slice(1)
-                            }`;
+                            trigger.textContent = `Select ${dropdown.dataset.type.charAt(0).toUpperCase() + dropdown.dataset.type.slice(1)}`;
                             trigger.classList.remove('text-gray-800');
                             trigger.classList.add(typePlaceholderMap[dropdown.dataset.type]);
 
