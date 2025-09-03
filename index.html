@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hooked Model Exercise (Mobile)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1c1c1c;
+        }
+        .custom-select {
+            position: relative;
+            cursor: pointer;
+            text-align: left;
+            border-radius: 0.5rem;
+            border-width: 2px;
+            font-weight: 600;
+        }
+        .custom-select-trigger {
+            padding: 8px 12px;
+            text-wrap: wrap;
+            height: auto;
+        }
+        .custom-options-list {
+            position: absolute;
+            z-index: 1000;
+            border-radius: 0.5rem;
+            border-width: 2px;
+            border-color: black;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            color: black;
+        }
+        .custom-option {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .custom-option:hover {
+            opacity: 0.8;
+        }
+        .custom-option.disabled {
+            color: #d1d5db;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .correct-select {
+            border-color: #22c55e !important;
+        }
+        .wrong-select {
+            border-color: #ef4444 !important;
+        }
+        /* Non-filled, transparent slots */
+        .name-slot {
+            background-color: transparent;
+            border-style: dashed;
+            border-color: #8b5cf6;
+        }
+        .description-slot {
+            background-color: transparent;
+            border-style: dashed;
+            border-color: #3b82f6;
+        }
+        .examples-slot {
+            background-color: transparent;
+            border-style: dashed;
+            border-color: #f59e0b;
+        }
+        /* Filled slots with solid color */
+        .name-filled {
+            background-color: #8b5cf6;
+            border-style: solid;
+            border-color: #8b5cf6;
+        }
+        .description-filled {
+            background-color: #3b82f6;
+            border-style: solid;
+            border-color: #3b82f6;
+        }
+        .examples-filled {
+            background-color: #f59e0b;
+            border-style: solid;
+            border-color: #f59e0b;
+        }
+        .name-options {
+            background-color: #8b5cf6;
+        }
+        .description-options {
+            background-color: #3b82f6;
+        }
+        .examples-options {
+            background-color: #f59e0b;
+        }
+        .name-placeholder-text {
+            color: #8b5cf6;
+        }
+        .description-placeholder-text {
+            color: #3b82f6;
+        }
+        .examples-placeholder-text {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center text-white">
+    <header class="text-center mb-8 w-full max-w-2xl">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-2">The Hooked Model Exercise</h1>
+        <p class="text-base sm:text-lg text-gray-400 mx-auto">
+            Use the dropdown menus to select the correct name, description, and examples for each phase of the Hooked Model.
+        </p>
+    </header>
+
+    <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8">
+        <!-- Quadrant 1: Trigger -->
+        <div class="bg-[#1c1c1c] border-2 border-white rounded-xl shadow-lg p-6 flex flex-col items-center transition-transform transform hover:scale-[1.01] duration-300">
+            <div id="trigger-slots" data-quadrant="trigger" class="w-full">
+                <div id="trigger-name-dropdown" data-type="name" class="custom-select name-slot h-12 mb-4">
+                    <button class="custom-select-trigger w-full flex items-center justify-between text-left name-placeholder-text">Select Name</button>
+                </div>
+                <div class="flex flex-col w-full gap-4">
+                    <div id="trigger-description-dropdown" data-type="description" class="custom-select description-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left description-placeholder-text">Select Description</button>
+                    </div>
+                    <div id="trigger-examples-dropdown" data-type="examples" class="custom-select examples-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left examples-placeholder-text">Select Examples</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Quadrant 2: Action -->
+        <div class="bg-[#1c1c1c] border-2 border-white rounded-xl shadow-lg p-6 flex flex-col items-center transition-transform transform hover:scale-[1.01] duration-300">
+            <div id="action-slots" data-quadrant="action" class="w-full">
+                <div id="action-name-dropdown" data-type="name" class="custom-select name-slot h-12 mb-4">
+                    <button class="custom-select-trigger w-full flex items-center justify-between text-left name-placeholder-text">Select Name</button>
+                </div>
+                <div class="flex flex-col w-full gap-4">
+                    <div id="action-description-dropdown" data-type="description" class="custom-select description-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left description-placeholder-text">Select Description</button>
+                    </div>
+                    <div id="action-examples-dropdown" data-type="examples" class="custom-select examples-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left examples-placeholder-text">Select Examples</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Quadrant 3: Variable Reward -->
+        <div class="bg-[#1c1c1c] border-2 border-white rounded-xl shadow-lg p-6 flex flex-col items-center transition-transform transform hover:scale-[1.01] duration-300">
+            <div id="reward-slots" data-quadrant="reward" class="w-full">
+                <div id="reward-name-dropdown" data-type="name" class="custom-select name-slot h-12 mb-4">
+                    <button class="custom-select-trigger w-full flex items-center justify-between text-left name-placeholder-text">Select Name</button>
+                </div>
+                <div class="flex flex-col w-full gap-4">
+                    <div id="reward-description-dropdown" data-type="description" class="custom-select description-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left description-placeholder-text">Select Description</button>
+                    </div>
+                    <div id="reward-examples-dropdown" data-type="examples" class="custom-select examples-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left examples-placeholder-text">Select Examples</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Quadrant 4: Investment -->
+        <div class="bg-[#1c1c1c] border-2 border-white rounded-xl shadow-lg p-6 flex flex-col items-center transition-transform transform hover:scale-[1.01] duration-300">
+            <div id="investment-slots" data-quadrant="investment" class="w-full">
+                <div id="investment-name-dropdown" data-type="name" class="custom-select name-slot h-12 mb-4">
+                    <button class="custom-select-trigger w-full flex items-center justify-between text-left name-placeholder-text">Select Name</button>
+                </div>
+                <div class="flex flex-col w-full gap-4">
+                    <div id="investment-description-dropdown" data-type="description" class="custom-select description-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left description-placeholder-text">Select Description</button>
+                    </div>
+                    <div id="investment-examples-dropdown" data-type="examples" class="custom-select examples-slot w-full">
+                        <button class="custom-select-trigger w-full flex items-center justify-between text-left examples-placeholder-text">Select Examples</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-center mt-6">
+        <button id="submit-btn" class="bg-gray-400 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-colors duration-300" disabled>Submit</button>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-gray-900 bg-opacity-75 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-xl text-center max-w-sm mx-auto transform transition-all duration-300 scale-95">
+            <h3 class="text-3xl font-bold text-gray-800 mb-4">Congratulations!</h3>
+            <p class="text-lg text-gray-600 mb-6">You have successfully completed the exercise and mastered the Hooked Model.</p>
+            <button id="close-modal-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full transition-colors duration-300">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const allCustomSelects = document.querySelectorAll('.custom-select');
+            const submitBtn = document.getElementById('submit-btn');
+            const modal = document.getElementById('modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            const optionsContainer = document.createElement('ul');
+            optionsContainer.classList.add('custom-options-list', 'hidden');
+            document.body.appendChild(optionsContainer);
+
+            let activeDropdown = null;
+
+            const optionsData = {
+                'name': [
+                    { text: 'Trigger', quadrant: 'trigger' },
+                    { text: 'Action', quadrant: 'action' },
+                    { text: 'Variable Reward', quadrant: 'reward' },
+                    { text: 'Investment', quadrant: 'investment' },
+                ],
+                'description': [
+                    { text: 'An internal or external cue that prompts the user.', quadrant: 'trigger' },
+                    { text: "The user's behavior in anticipation of a reward.", quadrant: 'action' },
+                    { text: 'An unpredictable reward that keeps users coming back.', quadrant: 'reward' },
+                    { text: 'An action that improves the service for the next cycle.', quadrant: 'investment' },
+                ],
+                'examples': [
+                    { text: 'A notification, a feeling of boredom, or an ad.', quadrant: 'trigger' },
+                    { text: 'Clicking a link, scrolling, or taking a photo.', quadrant: 'action' },
+                    { text: "New content, a 'like' on a post, or a new follower.", quadrant: 'reward' },
+                    { text: 'Inviting a friend or updating a profile.', quadrant: 'investment' },
+                ]
+            };
+
+            const typeSlotMap = {
+                'name': 'name-slot',
+                'description': 'description-slot',
+                'examples': 'examples-slot'
+            };
+
+            const typeFilledMap = {
+                'name': 'name-filled',
+                'description': 'description-filled',
+                'examples': 'examples-filled'
+            };
+
+            const typePlaceholderMap = {
+                'name': 'name-placeholder-text',
+                'description': 'description-placeholder-text',
+                'examples': 'examples-placeholder-text'
+            };
+
+            function closeAllDropdowns() {
+                optionsContainer.classList.add('hidden');
+                activeDropdown = null;
+            }
+
+            function updateSubmitButtonState() {
+                const allCorrect = Array.from(allCustomSelects).every(dropdown => {
+                    const quadrantContainer = dropdown.closest('[data-quadrant]');
+                    const slotQuadrant = quadrantContainer ? quadrantContainer.dataset.quadrant : undefined;
+                    const selectedQuadrant = dropdown.dataset.quadrant;
+                    const hasValue = dropdown.dataset.value && dropdown.dataset.value.trim().length > 0;
+                    return hasValue && slotQuadrant === selectedQuadrant;
+                });
+                if (allCorrect) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.replace('bg-gray-400', 'bg-blue-500');
+                    submitBtn.classList.add('hover:bg-blue-600', 'cursor-pointer');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.replace('bg-blue-500', 'bg-gray-400');
+                    submitBtn.classList.remove('hover:bg-blue-600', 'cursor-pointer');
+                }
+            }
+
+            allCustomSelects.forEach(dropdown => {
+                const trigger = dropdown.querySelector('.custom-select-trigger');
+
+                trigger.addEventListener('click', event => {
+                    event.stopPropagation();
+
+                    if (dropdown.classList.contains('correct-select')) {
+                        return;
+                    }
+
+                    const isAlreadyOpen = activeDropdown === dropdown;
+                    closeAllDropdowns();
+
+                    if (!isAlreadyOpen) {
+                        activeDropdown = dropdown;
+                        const type = dropdown.dataset.type;
+                        const usedValues = Array.from(allCustomSelects)
+                            .filter(d => d.dataset.type === type && d.dataset.value)
+                            .map(d => d.dataset.value);
+
+                        optionsContainer.innerHTML = '';
+                        optionsContainer.className = `custom-options-list ${type}-options`;
+
+                        optionsData[type].forEach(option => {
+                            const optionEl = document.createElement('li');
+                            optionEl.classList.add('custom-option');
+                            optionEl.textContent = option.text;
+                            optionEl.dataset.quadrant = option.quadrant;
+                            optionEl.dataset.value = option.text;
+
+                            if (usedValues.includes(option.text) && option.text !== dropdown.dataset.value) {
+                                optionEl.classList.add('disabled');
+                            }
+                            optionsContainer.appendChild(optionEl);
+                        });
+
+                        const rect = trigger.getBoundingClientRect();
+                        optionsContainer.style.top = `${rect.bottom + window.scrollY}px`;
+                        optionsContainer.style.left = `${rect.left + window.scrollX}px`;
+                        optionsContainer.style.width = `${rect.width}px`;
+                        optionsContainer.classList.remove('hidden');
+                    }
+                });
+            });
+
+            optionsContainer.addEventListener('click', event => {
+                const clickedOption = event.target.closest('.custom-option');
+                if (clickedOption && !clickedOption.classList.contains('disabled')) {
+                    if (activeDropdown) {
+                        activeDropdown.dataset.value = clickedOption.dataset.value;
+                        activeDropdown.dataset.quadrant = clickedOption.dataset.quadrant;
+
+                        const trigger = activeDropdown.querySelector('.custom-select-trigger');
+                        trigger.textContent = clickedOption.dataset.value;
+                        trigger.classList.add('text-gray-800');
+
+                        if (activeDropdown.dataset.type) {
+                            trigger.classList.remove(typePlaceholderMap[activeDropdown.dataset.type]);
+                            activeDropdown.classList.remove(typeSlotMap[activeDropdown.dataset.type]);
+                            activeDropdown.classList.add(typeFilledMap[activeDropdown.dataset.type]);
+                        }
+                    }
+                    closeAllDropdowns();
+                    updateSubmitButtonState();
+                }
+            });
+
+            document.addEventListener('click', event => {
+                if (!event.target.closest('.custom-select')) {
+                    closeAllDropdowns();
+                }
+            });
+
+            submitBtn.addEventListener('click', () => {
+                let allCorrect = true;
+
+                allCustomSelects.forEach(dropdown => {
+                    dropdown.classList.remove('correct-select', 'wrong-select');
+
+                    const quadrantContainer = dropdown.closest('[data-quadrant]');
+                    const slotQuadrant = quadrantContainer ? quadrantContainer.dataset.quadrant : undefined;
+                    const selectedQuadrant = dropdown.dataset.quadrant;
+
+                    const hasValue = dropdown.dataset.value && dropdown.dataset.value.trim().length > 0;
+                    const isCorrect = hasValue && slotQuadrant === selectedQuadrant;
+
+                    if (isCorrect) {
+                        dropdown.classList.add('correct-select');
+                    } else {
+                        allCorrect = false;
+                        dropdown.classList.add('wrong-select');
+
+                        dropdown.removeAttribute('data-value');
+                        dropdown.removeAttribute('data-quadrant');
+
+                        const trigger = dropdown.querySelector('.custom-select-trigger');
+                        if (dropdown.dataset.type) {
+                            trigger.textContent = `Select ${
+                                dropdown.dataset.type.charAt(0).toUpperCase() + dropdown.dataset.type.slice(1)
+                            }`;
+                            trigger.classList.remove('text-gray-800');
+                            trigger.classList.add(typePlaceholderMap[dropdown.dataset.type]);
+
+                            dropdown.classList.remove(typeFilledMap[dropdown.dataset.type]);
+                            dropdown.classList.add(typeSlotMap[dropdown.dataset.type]);
+                        }
+                    }
+                });
+
+                if (allCorrect) {
+                    allCustomSelects.forEach(dropdown => {
+                        dropdown.querySelector('.custom-select-trigger').disabled = true;
+                    });
+                    setTimeout(() => {
+                        modal.classList.remove('hidden');
+                        modal.querySelector('div').classList.add('scale-100');
+                    }, 500);
+                }
+                updateSubmitButtonState();
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            updateSubmitButtonState();
+        });
+    </script>
+</body>
+</html>
